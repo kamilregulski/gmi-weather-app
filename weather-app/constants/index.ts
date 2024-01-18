@@ -1,6 +1,8 @@
-export const apiKey = 'place your api key here from : https://www.weatherapi.com';
+export const apiServer = 'http://localhost:3000';
+export const apiKey = '';
+export const defaultCityName = 'Warsaw';
 
-export const weatherImages = {
+export const weatherImages: any = {
   'Partly cloudy': require('../assets/images/partlycloudy.png'),
   'Moderate rain': require('../assets/images/moderaterain.png'),
   'Patchy rain possible': require('../assets/images/moderaterain.png'),
