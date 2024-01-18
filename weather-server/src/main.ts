@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { ApiModule } from './api.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(ApiModule);
 
   const config = new DocumentBuilder()
     .setTitle('Weather API')
