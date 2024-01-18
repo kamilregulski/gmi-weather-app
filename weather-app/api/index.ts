@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-import { apiServer } from '../constants';
+import { apiKey, apiServer } from '../constants';
+
+axios.defaults.headers['X-API-KEY'] = apiKey;
 
 interface ApiQuery {
   cityName: string;
