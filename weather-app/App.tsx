@@ -70,8 +70,10 @@ const App = () => {
     fetchWeatherForecast({
       cityName,
     }).then((data) => {
-      setLoading(false);
-      setWeather(data);
+      if (data?.location?.name) {
+        setLoading(false);
+        setWeather(data);
+      }
     });
   };
 
@@ -97,7 +99,7 @@ const App = () => {
   const updateFavorite = async () => {
     let updated: Favorite[] = [];
     updated = isFavorite
-      ? favorites.filter((f: Favorite) => f.name !== weather?.location.name)
+      ? favorites.filter(({ name }: Favorite) => name !== weather?.location?.name)
       : [...favorites, { name: weather?.location.name } as Favorite];
     setFavorites(updated);
     storeData(FAVORITES_KEY, JSON.stringify(updated));
