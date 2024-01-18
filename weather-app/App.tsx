@@ -5,17 +5,19 @@ import {
   ActivityIndicator,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
-import { MapPinIcon } from 'react-native-heroicons/solid';
+import { MagnifyingGlassIcon, StarIcon, XMarkIcon } from 'react-native-heroicons/outline';
+import { MapPinIcon, StarIcon as StarIconSolid } from 'react-native-heroicons/solid';
 
 import { fetchLocations, fetchWeatherForecast } from './api';
-import { defaultCityName, weatherImages } from './constants';
+import { FAVORITES_KEY, defaultCityName, weatherImages } from './constants';
 import { theme } from './theme';
+import { getData, storeData } from './utils/asyncStorage';
 
 interface WeatherLocation {
   name: string;
@@ -36,15 +38,30 @@ interface Weather {
   current: WeatherCurrent;
 }
 
+interface Favorite {
+  name: string;
+}
+
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [showSearch, toggleSearch] = useState(false);
   const [locations, setLocations] = useState([]);
   const [weather, setWeather] = useState<Weather>();
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [isFavorite, setIsFavorite] = useState<boolean>();
 
   useEffect(() => {
     getLocationWeather(defaultCityName);
+    // getFavorites();
   }, []);
+
+  useEffect(() => {
+    getFavorites();
+  }, [weather]);
+
+  useEffect(() => {
+    checkFavorite();
+  }, [favorites]);
 
   const getLocationWeather = (cityName: string) => {
     setLoading(true);
@@ -63,6 +80,27 @@ const App = () => {
       fetchLocations({ cityName }).then((data) => {
         setLocations(data);
       });
+  };
+
+  const getFavorites = async () => {
+    const stringified = await getData(FAVORITES_KEY);
+    if (stringified) {
+      const parsed = JSON.parse(stringified);
+      setFavorites(parsed);
+    }
+  };
+
+  const checkFavorite = () => {
+    setIsFavorite(!!favorites.find((f: Favorite) => f.name === weather?.location.name));
+  };
+
+  const updateFavorite = async () => {
+    let updated: Favorite[] = [];
+    updated = isFavorite
+      ? favorites.filter((f: Favorite) => f.name !== weather?.location.name)
+      : [...favorites, { name: weather?.location.name } as Favorite];
+    setFavorites(updated);
+    storeData(FAVORITES_KEY, JSON.stringify(updated));
   };
 
   return (
@@ -125,12 +163,26 @@ const App = () => {
             ) : null}
           </View>
           <View className="mx-4 flex justify-around flex-1 mb-2">
-            <Text className="text-white text-center text-2xl font-bold">
-              {`${weather?.location?.name}, `}
-              <Text className="text-lg font-semibold text-gray-300">
-                {weather?.location?.country}
+            <View className="flex-row justify-center">
+              <Text className="text-white text-center text-2xl font-bold">
+                {`${weather?.location?.name}, `}
+                <Text className="text-lg font-semibold text-gray-300">
+                  {weather?.location?.country}
+                </Text>
               </Text>
-            </Text>
+            </View>
+            <View className="flex-row justify-center">
+              <TouchableOpacity
+                onPress={updateFavorite}
+                className="rounded-full p-1 m-1"
+                style={{ backgroundColor: theme.bgWhite(0.1) }}>
+                {isFavorite ? (
+                  <StarIconSolid size="40" color="gold" />
+                ) : (
+                  <StarIcon size="40" color="white" />
+                )}
+              </TouchableOpacity>
+            </View>
             <View className="flex-row justify-center">
               <Image
                 source={weatherImages[weather?.current?.condition?.text || 'other']}
@@ -161,6 +213,28 @@ const App = () => {
                 {weather?.current?.condition?.text}
               </Text>
             </View>
+          </View>
+          <View className="mb-2 space-y-3">
+            <View className="flex-row items-center mx-5 space-x-2">
+              <StarIconSolid size="22" color="gold" />
+              <Text className="text-gray-200 text-base">Favorite cities ({favorites?.length})</Text>
+            </View>
+            <ScrollView
+              horizontal
+              contentContainerStyle={{ paddingHorizontal: 15 }}
+              showsHorizontalScrollIndicator={false}>
+              {favorites?.map(({ name }: Favorite, index) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => getLocationWeather(name)}
+                    className="rounded-full p-3 m-1"
+                    style={{ backgroundColor: theme.bgWhite(0.1) }}>
+                    <Text className="text-white text-lg">{name}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
           </View>
         </SafeAreaView>
       )}

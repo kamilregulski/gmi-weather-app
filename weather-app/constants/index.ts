@@ -1,6 +1,7 @@
 export const apiServer = 'http://localhost:3000';
 export const apiKey = '';
 export const defaultCityName = 'Warsaw';
+export const FAVORITES_KEY = 'FAVORITES_KEY';
 
 export const weatherImages: any = {
   'Partly cloudy': require('../assets/images/partlycloudy.png'),
