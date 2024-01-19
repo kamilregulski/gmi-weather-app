@@ -3,6 +3,7 @@ import { withExpoSnack } from 'nativewind';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -63,25 +64,44 @@ const App = () => {
     checkFavorite();
   }, [favorites]);
 
-  const getLocationWeather = (cityName: string) => {
+  const errorAlert = () => {
+    Alert.alert(
+      'Something went wrong...',
+      'We are sorry, but we cannot fetch data from our API right now. Please try again later...',
+      [
+        {
+          text: 'OK',
+          style: 'cancel',
+        },
+      ],
+    );
+  };
+
+  function getLocationWeather(cityName: string) {
     setLoading(true);
     toggleSearch(false);
     setLocations([]);
     fetchWeatherForecast({
       cityName,
-    }).then((data) => {
-      if (data?.location?.name) {
-        setLoading(false);
-        setWeather(data);
-      }
-    });
-  };
+    })
+      .then((data) => {
+        if (data?.location?.name) {
+          setLoading(false);
+          setWeather(data);
+        } else {
+          throw new Error();
+        }
+      })
+      .catch(errorAlert);
+  }
 
   const onChangeSearchText = (cityName: string) => {
     if (cityName && cityName.length > 2)
-      fetchLocations({ cityName }).then((data) => {
-        setLocations(data);
-      });
+      fetchLocations({ cityName })
+        .then((data) => {
+          setLocations(data);
+        })
+        .catch(errorAlert);
   };
 
   const getFavorites = async () => {
