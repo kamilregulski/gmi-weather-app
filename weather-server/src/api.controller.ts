@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiService } from './api.service';
+import { ApiService, ApiResourceType } from './api.service';
 
 @Controller()
 export class ApiController {
@@ -14,12 +14,12 @@ export class ApiController {
   @Get('search/:cityName')
   @UseGuards(AuthGuard('api-key'))
   searchBy(@Param('cityName') cityName: string) {
-    return this.apiService.searchBy(cityName);
+    return this.apiService.findBy(ApiResourceType.search, cityName);
   }
 
   @Get('forecast/:cityName')
   @UseGuards(AuthGuard('api-key'))
   forecastBy(@Param('cityName') cityName: string) {
-    return this.apiService.forecastBy(cityName);
+    return this.apiService.findBy(ApiResourceType.forecast, cityName);
   }
 }
