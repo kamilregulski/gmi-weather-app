@@ -58,7 +58,7 @@ After that just follow available `Expo commands` visible on you `Terminal window
 
 ## App screenshots
 <p float="left">
-  <img src="https://github.com/kamilregulski/gmi-weather-app/blob/main/screenshots/1.png?raw=true" width="33%">
-  <img src="https://github.com/kamilregulski/gmi-weather-app/blob/main/screenshots/2.png?raw=true" width="33%">
-  <img src="https://github.com/kamilregulski/gmi-weather-app/blob/main/screenshots/3.png?raw=true" width="33%">
+  <img src="https://github.com/kamilregulski/gmi-weather-app/blob/main/screenshots/1.png?raw=true" width="25%">
+  <img src="https://github.com/kamilregulski/gmi-weather-app/blob/main/screenshots/2.png?raw=true" width="25%">
+  <img src="https://github.com/kamilregulski/gmi-weather-app/blob/main/screenshots/3.png?raw=true" width="25%">
 </p>
