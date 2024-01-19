@@ -8,14 +8,14 @@ import {
   SafeAreaView,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { MagnifyingGlassIcon, StarIcon, XMarkIcon } from 'react-native-heroicons/outline';
+import { StarIcon } from 'react-native-heroicons/outline';
 import { MapPinIcon, StarIcon as StarIconSolid } from 'react-native-heroicons/solid';
 
 import { fetchLocations, fetchWeatherForecast } from './api';
+import SearchBar from './components/SearchBar';
 import { FAVORITES_KEY, defaultCityName, weatherImages } from './constants';
 import { theme } from './theme';
 import { getData, storeData } from './utils/asyncStorage';
@@ -53,7 +53,6 @@ const App = () => {
 
   useEffect(() => {
     getLocationWeather(defaultCityName);
-    // getFavorites();
   }, []);
 
   useEffect(() => {
@@ -140,30 +139,11 @@ const App = () => {
       ) : (
         <SafeAreaView className="flex flex-1">
           <View style={{ height: '7%' }} className="mx-4 relative z-50">
-            <View
-              className="flex-row justify-end items-center rounded-full"
-              style={{
-                backgroundColor: showSearch ? theme.bgWhite(0.2) : 'transparent',
-              }}>
-              {showSearch ? (
-                <TextInput
-                  onChangeText={onChangeSearchText}
-                  placeholder="Search city"
-                  placeholderTextColor="lightgray"
-                  className="pl-6 h-10 pb-1 flex-1 text-base text-white"
-                />
-              ) : null}
-              <TouchableOpacity
-                onPress={() => toggleSearch(!showSearch)}
-                className="rounded-full p-3 m-1"
-                style={{ backgroundColor: theme.bgWhite(0.3) }}>
-                {showSearch ? (
-                  <XMarkIcon size="25" color="white" />
-                ) : (
-                  <MagnifyingGlassIcon size="25" color="white" />
-                )}
-              </TouchableOpacity>
-            </View>
+            <SearchBar
+              showSearch={showSearch}
+              toggleSearch={toggleSearch}
+              onChangeSearchText={onChangeSearchText}
+            />
             {locations.length > 0 && showSearch ? (
               <View className="absolute w-full bg-gray-300 top-16 rounded-3xl ">
                 {locations.map((location: Weather['location'], index: number) => {
